@@ -20,7 +20,7 @@ from http_client import HttpClient
 class Client(Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.http_client = HttpClient()
+        self.http_client = HttpClient()
 
     def stop(self, *args, **kwargs):
         self.http_client.close_session()
