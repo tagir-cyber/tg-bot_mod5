@@ -6,7 +6,7 @@ from models import User, Rating
 class HttpClient:
     def __init__(self):
         self.session = aiohttp.ClientSession()
-        self.host = "https://group-dev-2-flask-production.up.railway.app"
+        self.host = "https://flask-mod5.onrender.com"
         self.cache = {}
 
     async def get_user(self, tg_id: int) -> User | None:
