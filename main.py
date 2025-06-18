@@ -124,7 +124,7 @@ async def unknown_message(client: Client, message: Message):
     await message.reply(
         "Неизвестная команда. "
         "Используйте кнопки внизу экрана, чтобы взаимодействовать с ботом."
-    )
+    ) 
 
 
 bot.run()
