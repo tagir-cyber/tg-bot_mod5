@@ -2,18 +2,23 @@ import aiohttp
 
 from models import User, Rating
 
-
 class HttpClient:
     def __init__(self):
-        self.session = aiohttp.ClientSession()
+        self.session = None
         self.host = "https://flask-mod5.onrender.com"
         self.cache = {}
+
+    async def get_session(self):
+        if self.session is None or self.session.closed:
+            self.session = aiohttp.ClientSession()
+        return self.session
 
     async def get_user(self, tg_id: int) -> User | None:
         if tg_id in self.cache:
             return self.cache[tg_id]
 
-        async with self.session.get(f"{self.host}/get_user?tg_id={tg_id}") as response:
+        session = await self.get_session()
+        async with session.get(f"{self.host}/get_user?tg_id={tg_id}") as response:
             if response.status == 200:
                 data = await response.json(content_type=None)
                 if data["status"] == 200:
@@ -26,7 +31,8 @@ class HttpClient:
             return None
 
     async def create_user(self, tg_id: int, username: str) -> User | None:
-        async with self.session.get(f"{self.host}/create_user?tg_id={tg_id}&username={username}") as response:
+        session = await self.get_session()
+        async with session.get(f"{self.host}/create_user?tg_id={tg_id}&username={username}") as response:
             if response.status == 200:
                 data = await response.json(content_type=None)
                 if data["status"] == 200:
@@ -39,7 +45,8 @@ class HttpClient:
             return None
 
     async def get_rating(self) -> list[Rating] | None:
-        async with self.session.get(f"{self.host}/get_rating") as response:
+        session = await self.get_session()
+        async with session.get(f"{self.host}/get_rating") as response:
             if response.status == 200:
                 data = await response.json(content_type=None)
                 if data["status"] == 200:
@@ -50,4 +57,5 @@ class HttpClient:
             return None
 
     async def close_session(self):
-        await self.session.close()
+        if self.session is not None and not self.session.closed:
+            await self.session.close()
